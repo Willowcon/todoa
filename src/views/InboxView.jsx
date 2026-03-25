@@ -3,7 +3,7 @@ import TaskList from '../components/TaskList'
 import AddTaskForm from '../components/AddTaskForm'
 
 export default function InboxView() {
-  const { tasks, loading, addTask, toggleTask, deleteTask } = useTasks({ projectId: null })
+  const { tasks, loading, addTask, updateTask, toggleTask, deleteTask } = useTasks({ projectId: null })
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
@@ -13,7 +13,7 @@ export default function InboxView() {
         {loading ? (
           <p className="text-sm text-gray-400 text-center py-8">Loading...</p>
         ) : (
-          <TaskList tasks={tasks} onToggle={toggleTask} onDelete={deleteTask} />
+          <TaskList tasks={tasks} onToggle={toggleTask} onDelete={deleteTask} onUpdate={updateTask} />
         )}
       </div>
     </div>

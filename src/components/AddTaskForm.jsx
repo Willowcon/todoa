@@ -7,6 +7,7 @@ export default function AddTaskForm({ onAdd, defaultProjectId = null, defaultDue
   const [priority, setPriority] = useState(4)
   const [dueDate, setDueDate] = useState(defaultDueDate ?? '')
   const [projectId, setProjectId] = useState(defaultProjectId)
+  const [tag, setTag] = useState('')
   const [expanded, setExpanded] = useState(false)
 
   const handleSubmit = async (e) => {
@@ -17,10 +18,12 @@ export default function AddTaskForm({ onAdd, defaultProjectId = null, defaultDue
       priority,
       due_date: dueDate || null,
       project_id: projectId,
+      tag: tag || null,
     })
     setTitle('')
     setPriority(4)
     setDueDate(defaultDueDate ?? '')
+    setTag('')
     setProjectId(defaultProjectId)
     setExpanded(false)
   }
@@ -67,6 +70,16 @@ export default function AddTaskForm({ onAdd, defaultProjectId = null, defaultDue
             onChange={(e) => setDueDate(e.target.value)}
             className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 text-gray-600 bg-white outline-none focus:ring-2 focus:ring-indigo-500"
           />
+
+          <select
+            value={tag}
+            onChange={(e) => setTag(e.target.value)}
+            className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 text-gray-600 bg-white outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            <option value="">No tag</option>
+            <option value="personal">Personal</option>
+            <option value="work">Work</option>
+          </select>
 
           {showProjectPicker && (
             <select

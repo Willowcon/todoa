@@ -5,7 +5,7 @@ import AddTaskForm from '../components/AddTaskForm'
 const today = new Date().toISOString().split('T')[0]
 
 export default function TodayView() {
-  const { tasks, loading, addTask, toggleTask, deleteTask } = useTasks({ dueToday: true })
+  const { tasks, loading, addTask, updateTask, toggleTask, deleteTask } = useTasks({ dueToday: true })
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
@@ -20,7 +20,7 @@ export default function TodayView() {
         {loading ? (
           <p className="text-sm text-gray-400 text-center py-8">Loading...</p>
         ) : (
-          <TaskList tasks={tasks} onToggle={toggleTask} onDelete={deleteTask} showProject />
+          <TaskList tasks={tasks} onToggle={toggleTask} onDelete={deleteTask} onUpdate={updateTask} showProject />
         )}
       </div>
     </div>

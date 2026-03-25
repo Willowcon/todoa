@@ -6,7 +6,7 @@ import AddTaskForm from '../components/AddTaskForm'
 
 export default function ProjectDetailView() {
   const { projectId } = useParams()
-  const { tasks, loading, addTask, toggleTask, deleteTask } = useTasks({ projectId })
+  const { tasks, loading, addTask, updateTask, toggleTask, deleteTask } = useTasks({ projectId })
   const { projects } = useProjects()
 
   const project = projects.find((p) => p.id === projectId)
@@ -27,7 +27,7 @@ export default function ProjectDetailView() {
         {loading ? (
           <p className="text-sm text-gray-400 text-center py-8">Loading...</p>
         ) : (
-          <TaskList tasks={tasks} onToggle={toggleTask} onDelete={deleteTask} />
+          <TaskList tasks={tasks} onToggle={toggleTask} onDelete={deleteTask} onUpdate={updateTask} />
         )}
       </div>
     </div>

@@ -1,3 +1,5 @@
+import { useState, useRef, useEffect } from 'react'
+
 const priorityStyles = {
   1: 'bg-red-100 text-red-700',
   2: 'bg-orange-100 text-orange-700',
@@ -12,7 +14,41 @@ const priorityBorder = {
   4: 'border-gray-300 hover:bg-gray-50',
 }
 
-export default function TaskItem({ task, onToggle, onDelete, showProject }) {
+const tagStyles = {
+  work: 'bg-blue-100 text-blue-700',
+  personal: 'bg-green-100 text-green-700',
+}
+
+export default function TaskItem({ task, onToggle, onDelete, onUpdate, showProject }) {
+  const [editing, setEditing] = useState(false)
+  const [editTitle, setEditTitle] = useState(task.title)
+  const inputRef = useRef(null)
+
+  useEffect(() => {
+    if (editing && inputRef.current) {
+      inputRef.current.focus()
+      inputRef.current.select()
+    }
+  }, [editing])
+
+  const saveTitle = () => {
+    const trimmed = editTitle.trim()
+    if (trimmed && trimmed !== task.title) {
+      onUpdate(task.id, { title: trimmed })
+    } else {
+      setEditTitle(task.title)
+    }
+    setEditing(false)
+  }
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') saveTitle()
+    if (e.key === 'Escape') {
+      setEditTitle(task.title)
+      setEditing(false)
+    }
+  }
+
   const formatDate = (d) => {
     if (!d) return null
     const date = new Date(d + 'T00:00:00')
@@ -45,9 +81,24 @@ export default function TaskItem({ task, onToggle, onDelete, showProject }) {
       </button>
 
       <div className="flex-1 min-w-0">
-        <p className={`text-sm font-medium truncate ${task.completed ? 'line-through text-gray-400' : 'text-gray-900'}`}>
-          {task.title}
-        </p>
+        {editing ? (
+          <input
+            ref={inputRef}
+            type="text"
+            value={editTitle}
+            onChange={(e) => setEditTitle(e.target.value)}
+            onBlur={saveTitle}
+            onKeyDown={handleKeyDown}
+            className="text-sm font-medium text-gray-900 w-full outline-none bg-transparent border-b border-indigo-400 py-0.5"
+          />
+        ) : (
+          <p
+            onClick={() => !task.completed && setEditing(true)}
+            className={`text-sm font-medium truncate ${task.completed ? 'line-through text-gray-400' : 'text-gray-900 cursor-pointer hover:text-indigo-600'}`}
+          >
+            {task.title}
+          </p>
+        )}
         <div className="flex items-center gap-2 mt-0.5">
           {task.due_date && (
             <span className={`text-xs ${isOverdue && !task.completed ? 'text-red-500 font-medium' : 'text-gray-400'}`}>
@@ -61,6 +112,12 @@ export default function TaskItem({ task, onToggle, onDelete, showProject }) {
           )}
         </div>
       </div>
+
+      {task.tag && (
+        <span className={`shrink-0 text-xs font-medium px-1.5 py-0.5 rounded capitalize ${tagStyles[task.tag]}`}>
+          {task.tag}
+        </span>
+      )}
 
       <span className={`shrink-0 text-xs font-semibold px-1.5 py-0.5 rounded ${priorityStyles[task.priority]}`}>
         P{task.priority}

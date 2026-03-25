@@ -34,13 +34,24 @@ export function useTasks(filter = {}) {
 
   useEffect(() => { fetchTasks() }, [fetchTasks])
 
-  const addTask = async ({ title, priority = 4, due_date = null, project_id = null }) => {
+  const addTask = async ({ title, priority = 4, due_date = null, project_id = null, tag = null }) => {
     const { data } = await supabase
       .from('tasks')
-      .insert({ title, priority, due_date, project_id })
+      .insert({ title, priority, due_date, project_id, tag })
       .select('*, projects(name)')
       .single()
     if (data) setTasks((prev) => [data, ...prev])
+    return data
+  }
+
+  const updateTask = async (id, updates) => {
+    const { data } = await supabase
+      .from('tasks')
+      .update(updates)
+      .eq('id', id)
+      .select('*, projects(name)')
+      .single()
+    if (data) setTasks((prev) => prev.map((t) => (t.id === id ? data : t)))
     return data
   }
 
@@ -56,5 +67,5 @@ export function useTasks(filter = {}) {
     setTasks((prev) => prev.filter((t) => t.id !== id))
   }
 
-  return { tasks, loading, addTask, toggleTask, deleteTask, refetch: fetchTasks }
+  return { tasks, loading, addTask, updateTask, toggleTask, deleteTask, refetch: fetchTasks }
 }
